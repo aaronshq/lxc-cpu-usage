@@ -19,26 +19,26 @@ class CPU():
         """
         try:
             # time_ns() only supported by python 3.7
-            use_time = time.time_ns()
+            total_time = time.time_ns()
         except Exception:
-            use_time = subprocess.check_output(['date', '+%s%N'])
+            total_time = subprocess.check_output(['date', '+%s%N'])
 
-        return int(use_time)
+        return int(total_time)
 
     def get_use_time(self):
         """get use time elapsed, in nanoseconds
         """
         with open(self.cpuacct_file, 'r') as f:
-            total_time = int(f.read())
-        return total_time
+            use_time = int(f.read())
+        return use_time
 
     def get_cpu_usage(self):
         current_total_time = self.get_total_time()
         current_use_time = self.get_use_time()
 
-        incr_use_time = current_use_time - self.last_use_time
-        incr_total_time = current_total_time - self.last_total_time
-        usage = incr_use_time / incr_total_time
+        delta_use_time = current_use_time - self.last_use_time
+        delta_total_time = current_total_time - self.last_total_time
+        usage = delta_use_time / delta_total_time
 
         self.last_total_time = current_total_time
         self.last_use_time = current_use_time
